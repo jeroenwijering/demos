@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Video Ads | Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, maximum-scale=1.0">
+  <script src="http://jwpsrv.com/library/5V3tOP97EeK2SxIxOUCPzg.js"></script>
+</head>
+<body>
+
+  <div id="demowrapper">
+    <div id="adplayer">
+      <div id="adrectangle"></div>
+      <div id="demoplayer"></div>
+    </div>
+    <div id="timeline">
+        <img src="timeline.png" alt="Ad Scheduling Timeline." />
+        <div id="highlight"></div>
+    </div>
+  </div>
+
+<style type="text/css">
+#demowrapper {
+  width: 960px;
+  height: 340px;
+  margin: 20px auto; padding: 0;
+}
+
+#adplayer { 
+  padding: 0 20px;
+}
+#adrectangle { 
+  float: right;
+  width: 300px;
+  height: 250px;
+  background-image: url('sintel.jpg');
+  box-shadow: 0 0 5px #999;
+}
+#timeline {
+  position: relative;
+  margin-top: 20px;
+}
+#highlight {
+  transition: width 0.25s;
+  position: absolute;
+  left: 20px;
+  top: 0;
+  height: 50px;
+  width: 0;
+  background: transparent url('highlight.png') 0 0 no-repeat;
+}
+</style>
+
+<script type="text/javascript">
+jwplayer("demoplayer").setup({
+  file: "http://content.jwplatform.com/videos/q1fx20VZ-640.mp4",
+  image: "http://content.jwplatform.com/thumbs/q1fx20VZ-640.jpg",
+  advertising: {
+    client: "vast",
+    companiondiv: { id: "adrectangle", height: 250, width: 300 },
+    schedule: "http://demo.jwplayer.com/static-tag/vmap.xml"
+  },
+  width: 592,
+  height: 250
+});
+
+jwplayer().onTime(function(event){
+  var p = event.position;
+  var w;
+  if(p < 300) {
+    w = 42 + p/300*124;
+  } else if (p > 301 && p < 600) { 
+    w = 234 + (p-300)/300*124;
+  } else if (p > 601) {
+    w = 426 + (p-600)/288*124;
+  }
+  document.getElementById("highlight").style.width = w + "px";
+});
+
+jwplayer().onAdTime(function(event) {
+  var t = event.tag.substr(-3);
+  var p = event.position;
+  var s = event.sequence;
+  var w = 0;
+  if(t == "pre") {
+    w = p/30*40;
+  } else if (t == "mr1") {
+    w = 146 + s*22 + p/10*22;
+  } else if (t == "mr2") {
+    w = 338 + s*22 + p/10*22;
+  } else if (t == "pst" ) {
+    w = 552 + p/30*40;
+  }
+  document.getElementById("highlight").style.width = w + "px";
+});
+</script>
+
+
+</body>
+</html>

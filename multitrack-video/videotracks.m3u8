@@ -1,0 +1,47 @@
+#EXTM3U
+#EXT-X-VERSION:4
+# Modified from Unified Streaming Platform(version=1.6.6)
+
+
+# 180p variants
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="low",NAME="Conductor",DEFAULT=YES,URI="http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=200000.m3u8"
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="low",NAME="Concert",DEFAULT=NO,URI="http://cdn.rco.video-dock.com/public/fischer_full_v1/fischer_full_v1.ism/fischer_full_v1-200=62717-video_eng=202000.m3u8"
+#EXT-X-STREAM-INF:BANDWIDTH=281000,CODECS="mp4a.40.2,avc1.42801E",RESOLUTION=320x180,VIDEO="low"
+http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=200000.m3u8
+
+
+# 360p variants
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="mid",NAME="Conductor",DEFAULT=YES,URI="http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=600000.m3u8"
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="mid",NAME="Concert",DEFAULT=NO,URI="http://cdn.rco.video-dock.com/public/fischer_full_v1/fischer_full_v1.ism/fischer_full_v1-200=62717-video_eng=601000.m3u8"
+#EXT-X-STREAM-INF:BANDWIDTH=703000,CODECS="mp4a.40.2,avc1.42801E",RESOLUTION=640x360,VIDEO="mid"
+http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=600000.m3u8
+
+
+# 720p variants
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="hi",NAME="Conductor", DEFAULT=YES,URI="http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=2500000.m3u8"
+#EXT-X-MEDIA:TYPE=VIDEO,GROUP-ID="hi",NAME="Concert", DEFAULT=NO,URI="http://cdn.rco.video-dock.com/public/fischer_full_v1/fischer_full_v1.ism/fischer_full_v1-200=62717-video_eng=2500000.m3u8"
+#EXT-X-STREAM-INF:BANDWIDTH=2717000,CODECS="mp4a.40.2,avc1.42801F",RESOLUTION=1280x720,VIDEO="hi"
+http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718-video_eng=2500000.m3u8
+
+
+# audio only
+#EXT-X-STREAM-INF:BANDWIDTH=67000,CODECS="mp4a.40.2"
+http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert-200=62718.m3u8
+
+
+# i-frames (just one)
+#EXT-X-I-FRAME-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=85000,CODECS="avc1.42801E",RESOLUTION=320x180,URI="http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/keyframes/fischer_comment_concert-video_eng=200000.m3u8"
+
+
+# original videodock urls
+# concert video, concert audio
+# http://cdn.rco.video-dock.com/public/fischer_full_v1/fischer_full_v1.ism/fischer_full_v1.m3u8
+# conductor video, comments audio 
+# http://cdn.rco.video-dock.com/public/fischer_comment_v1/fischer_comment_v1.ism/fischer_comment_v1.m3u8
+# conductor videos, mixdown audio
+# http://cdn.rco.video-dock.com/public/fischer_comment_concert/fischer_comment_concert.ism/fischer_comment_concert.m3u8
+
+
+# corresponding pantos example
+# https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#page-42
+

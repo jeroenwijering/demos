@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=800, maximum-scale=1.0">
+    <title>360 Video</title>
+    <script src="http://jwpsrv.com/library/5V3tOP97EeK2SxIxOUCPzg.js"></script>
+    <style type="text/css">
+        body { padding:0; width:720px; font:14px/20px Arial; background:#EEE; margin: 50px auto; }
+        #container { box-shadow: 0 0 5px #CCC; }
+        p { color: #666; text-align: center; }
+        a { color: #000; }
+    </style>
+</head>
+<body>
+
+
+<div id="container"></div>
+<script type="text/javascript">
+    jwplayer("container").setup({
+      wmode:'direct',
+      repeat:'true',
+      playlist: [{
+        file: 'clouds.mp4',
+        provider: 'PanframeSHDProvider.swf',
+        type: 'flv'
+      }],
+      width: 720,
+      height: 406
+    });
+</script>
+
+<p>You can click and drag with the mouse to look around or use the arrow-keys on your keyboard.</p>
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=960, maximum-scale=1.0">
+    <title>Interactive Transcripts</title>
+    <script src="http://jwpsrv.com/library/5V3tOP97EeK2SxIxOUCPzg.js"></script>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        background: #eee;
+        width: 960px;
+        margin: 40px auto;
+      }
+      section {
+        background: #FFF;
+        padding: 0;
+        position: relative;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        margin: 0;
+      }
+      #sidebar {
+        display: block;
+        position: absolute;
+        left: 576px;
+        top: 0px;
+        width: 384px;
+        height: 324px;
+        background: #FFF;
+      }
+      #sidebar h3 {
+        padding: 14px 20px 6px 20px;
+        margin: 0;
+        line-height: 40px;
+        font-size: 16px;
+        font-weight: normal;
+        color: #333;
+      }
+      #searchbox {
+        display: block;
+        position: absolute;
+        right: 20px;
+        top: 15px;
+      }
+      #searchbox input {
+        display: block;
+        line-height: 20px;
+        font-size: 13px;
+        color: #000;
+        width: 180px;
+        padding: 4px 22px;
+        background: #DDD url(search.png) no-repeat top left;
+        border-radius: 4px;
+        border: none;
+      }
+      #searchbox span {
+        position: absolute;
+        right: 10px;
+        top: 6px;
+        line-height: 20px;
+        font-size: 13px;
+        color: #666;
+      }
+      #transcript {
+        height: 264px;
+        overflow: auto;
+        font-size: 13px;
+        padding: 0 20px;
+      }
+      #transcript p {
+        margin: 0 0 10px 0;
+      }
+      #transcript span {
+        display: inline;
+        padding: 4px 2px;
+        line-height: 20px;
+        cursor: pointer;
+        color: #333;
+      }
+      #transcript span.current {
+        background: #FCC;
+        color: #000;
+      }
+      #transcript span:hover {
+        color: #C00;
+      }
+      #transcript span em { 
+        font-style: normal;
+        background: #666;
+        color: #FFF;
+      }
+      #transcript span em.current { 
+        background: #C00;
+      }
+      #transcript h4 {
+        margin: 0 0 5px 0;
+      }
+    </style>
+</head>
+<body>
+
+<section>
+  <div id="container"></div>
+  <div id="sidebar">
+    <h3>Video Transcript</h3>
+    <div id="searchbox">
+      <span id="match">0 of 0</span>
+      <input type="search" id="search" />
+    </div>
+    <div id="transcript"></div>
+  </div>
+</section>
+
+<script type="text/javascript">
+var chapters = [];
+var captions = [];
+var caption = -1;
+var matches = [];
+var query = "";
+var cycle = -1;
+
+var transcript = document.getElementById('transcript');
+var search = document.getElementById('search');
+var match = document.getElementById('match');
+
+
+
+// Setup JW Player
+jwplayer("container").setup({
+    file: 'http://content.jwplatform.com/manifests/iXvNRQwh.m3u8',
+    image: 'http://content.jwplatform.com/thumbs/iXvNRQwh-640.jpg',
+    tracks: [
+      { file: "http://content.jwplatform.com/tracks/aAC3jcd2.vtt", kind: "chapters" },
+      { file: "http://content.jwplatform.com/tracks/n4JNLydA.vtt", kind: "captions" },
+      { file: "http://content.jwplatform.com/strips/iXvNRQwh-120.vtt", kind: "thumbnails" }
+
+    ],
+    displaytitle: false,
+    width: 576,
+    height: 324
+});
+
+
+// Load chapters / captions
+jwplayer().onReady(function(){
+  var r = new XMLHttpRequest();
+  r.onreadystatechange = function() {
+    if (r.readyState == 4 && r.status == 200) {
+      var t = r.responseText.split("\r\n\r\n");
+      t.shift();
+      for(var i=0; i<t.length; i++) {
+        var c = parse(t[i]);
+        chapters.push(c);
+      }
+      loadCaptions();
+    }
+  };
+  r.open('GET','http://content.jwplatform.com/tracks/aAC3jcd2.vtt',true);
+  r.send();
+});
+
+function loadCaptions(){
+  var r = new XMLHttpRequest();
+  r.onreadystatechange = function() {
+    if (r.readyState == 4 && r.status == 200) {
+      var t = r.responseText.split("\r\n\r\n");
+      t.shift();
+      var h = "<p>";
+      var s = 0;
+      for(var i=0; i<t.length; i++) {
+        var c = parse(t[i]);
+        if(s < chapters.length && c.begin > chapters[s].begin) {
+          h += "</p><h4>"+chapters[s].text+"</h4><p>";
+          s++;
+        }
+        h += "<span id='caption"+i+"'>"+c.text+"</span>";
+        captions.push(c);
+      }
+      transcript.innerHTML = h + "</p>";
+    }
+  };
+  r.open('GET','http://content.jwplatform.com/tracks/n4JNLydA.vtt',true);
+  r.send();
+};
+function parse(d) {
+    var a = d.split("\n");
+    var i = a[1].indexOf(' --> ');
+    var t = a[2];
+    if (a[3]) {  t += " " + a[3]; }
+    t = t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return {
+      begin: seconds(a[1].substr(0,i)),
+      btext: a[1].substr(3,i-7),
+      end: seconds(a[1].substr(i+5)),
+      text: t
+    }
+};
+function seconds(s) {
+  var a = s.split(':');
+  var r = Number(a[a.length-1]) + Number(a[a.length-2]) * 60;
+  if(a.length > 2) { r+= Number(a[a.length-3]) * 3600; }
+  return r;
+};
+
+
+
+// Highlight current caption and chapter
+jwplayer().onTime(function(e){
+  var p = e.position;
+  for(var j=0; j<captions.length; j++) {
+    if(captions[j].begin < p && captions[j].end > p) {
+      if(j != caption) {
+        var c = document.getElementById('caption'+j);
+        if(caption > -1) {
+          document.getElementById('caption'+caption).className = "";
+        }
+        c.className = "current";
+        if(query == "") {
+          transcript.scrollTop = c.offsetTop - transcript.offsetTop - 40;
+        }
+        caption = j;
+      }
+      break; 
+    }
+  }
+});
+
+
+
+// Hook up interactivity
+transcript.addEventListener("click",function(e) {
+  if(e.target.id.indexOf("caption") == 0) { 
+    var i = Number(e.target.id.replace("caption",""));
+    jwplayer().seek(captions[i].begin);
+  }
+});
+search.addEventListener('focus',function(e){
+  setTimeout(function(){search.select();},100);
+});
+search.addEventListener('keydown',function(e) {
+  if(e.keyCode == 27) {
+    resetSearch();
+  } else if (e.keyCode == 13) {
+    var q = this.value.toLowerCase();
+    if(q.length > 0) {
+      if (q == query) {
+        if(cycle >= matches.length - 1) {
+          cycleSearch(0);
+        } else { 
+          cycleSearch(cycle + 1);
+        }
+      } else {
+        resetSearch();
+        searchTranscript(q);
+      }
+    } else {
+      resetSearch();
+    }
+  }
+});
+
+
+
+// Execute search
+function searchTranscript(q) {
+  matches = [];
+  query = q;
+  for(var i=0; i<captions.length; i++) {
+    var m = captions[i].text.toLowerCase().indexOf(q);
+    if( m > -1) {
+      document.getElementById('caption'+i).innerHTML = 
+        captions[i].text.substr(0,m) + "<em>" + 
+        captions[i].text.substr(m,q.length) + "</em>" + 
+        captions[i].text.substr(m+q.length);
+      matches.push(i);
+    }
+  }
+  if(matches.length) {
+    cycleSearch(0);
+  } else {
+    resetSearch();
+  }
+};
+function cycleSearch(i) {
+  if(cycle > -1) {
+    var o = document.getElementById('caption'+matches[cycle]);
+    o.getElementsByTagName("em")[0].className = "";
+  }
+  var c = document.getElementById('caption'+matches[i]);
+  c.getElementsByTagName("em")[0].className = "current";
+  match.innerHTML = (i+1) + " of " + matches.length;
+  transcript.scrollTop = c.offsetTop - transcript.offsetTop - 40;
+  cycle = i;
+};
+function resetSearch() {
+  if(matches.length) {
+    for(var i=0; i<captions.length; i++) {
+      document.getElementById('caption'+i).innerHTML = captions[i].text;
+    }
+  }
+  query = "";
+  matches = [];
+  match.innerHTML = "0 of 0";
+  cycle = -1;
+  transcript.scrollTop = 0;
+};
+</script>
+
+
+</body>
+</html>
